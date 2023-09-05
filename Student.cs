@@ -1,56 +1,73 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Students
 {
-    public class Student
+    public class Message
     {
-        public string Name { get; }
-        public int age { get; }
-        private readonly string _city;
-        public string status;
+        private readonly string _content;
+        private readonly string _author;
+        private readonly DateTime _time;
+        private int _likes;
 
-        public Student(string name, int age, string city)
+        public Message() { }
+
+        public Message(string content, string author, DateTime time)
         {
-            Name = name;
-            Age = age;
-            _city = city;
+            this._content = content;
+            this._author = author;
+            this._time = time;
         }
-        public int Age
+
+        public int Likes { get => _likes; }
+        public DateTime Time { get => _time; }
+        public string Author { get => _author; }
+        public string Content { get => _content; }
+
+        public void AddLike()
         {
-            get { return age; }
-            set
+            _likes++;
+        }
+
+        public double GetPopularity()
+        {
+            double elapsed = DateTime.Now.Subtract(this._time).TotalSeconds;
+            if (elapsed == 0)
             {
-                Age = value;
-                if (age < 18) status = "alaealine";
-                else status = "täiskasvaanud";
+                return _likes;
             }
-            
+            return _likes / elapsed;
+
+        }
+        public void Showmessage()
+        {
+            Console.WriteLine("Sisu: {0}\nAutor {1}",Content, Author);
+        }
+        public string popularinfo(double esimene, double teine)
+        {
+            string rezult = "";
+            if (esimene > teine) { rezult = "Esimene sõnum on populaarsem kui teine"; };
+            if (esimene < teine) { rezult = "Teine sõnum on populaarsem kui Esimene"; };
+            if (esimene == teine) { rezult = "Nad sarnased"; };
+            return rezult;
+        }
+        public string PopularInfon(List<Message> messages)
+        {
+            string rezult = "";
+            double popularity = 0;
+            for(int i =0; i < messages.Count; i++)
+            {
+                if (messages[i].GetPopularity() > popularity)
+                {
+                    rezult = messages[i].Content + " on kõige populaasrsem sõnum, seda kirjutas " + messages[i].Author;
+                }
+            }
+            return rezult;
         }
 
-        public int Birth
-        {
-            get { return age; }
-        }
-        
-
-        public string Status
-        {
-            get { return status; }
-        }
-        public string GetCity()
-        {
-            return _city;
-        }
-
-        public void ShowInfo()
-        {
-            Console.WriteLine(Name);
-            Console.WriteLine(Age);
-            Console.WriteLine(GetCity());
-        }
     }
 }
